@@ -1,0 +1,38 @@
+{
+  "name": "caching-backend-pg",
+  "version": "1.0.0",
+  "engines": {
+    "node": ">=18.13.0"
+  },
+  "description": "Demo Geocaching coords app based on Postgres",
+  "main": "src/server.js",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon src/server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "nodejs",
+    "REST",
+    "api",
+    "express",
+    "knex",
+    "postgres"
+  ],
+  "author": "Kaj Lund",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "knex": "^2.5.1",
+    "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "eslint": "^8.48.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.0",
+    "nodemon": "^3.0.1",
+    "prettier": "^3.0.3"
+  }
+}
