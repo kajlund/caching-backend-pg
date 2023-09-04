@@ -2,6 +2,8 @@ import express from 'express'
 import cors from 'cors'
 
 import db from './db/db.js'
+import errorHandler from './middleware/error.handler.js'
+import notFoundHandler from './middleware/404.handler.js'
 
 const app = express()
 
@@ -24,8 +26,9 @@ app.get('/ping', (req, res) => {
 // Route handlers
 
 // 404 Handler
-
+app.use(notFoundHandler)
 // Error Handler
+app.use(errorHandler)
 
 // Connect to DB
 db.connect()
