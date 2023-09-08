@@ -9,42 +9,33 @@ const caches = JSON.parse(await readFile(new URL('./caches.json', import.meta.ur
 
 import db from '../db.js'
 
-const finUserIdByEmail = async (email) => {
-  let userId = ''
+const finUserByEmail = async (email) => {
   const user = await db.knex('Users').where('email', email).first()
   if (user) {
-    userId = user.id
+    return user
   }
-  // console.log(`userId = ${userId}`)
-  return userId
+  return null
 }
 
-const findPlaceIdByName = async (name) => {
-  let placeId = ''
-  let nameParam = name ? name.toLowerCase().trim() : ''
+const findPlaceByName = async (name) => {
+  let nameParam = name ? name.trim() : ''
   if (nameParam) {
-    const place = await db
-      .knex('Places')
-      .whereRaw(`lower('nameSv') = ?`, [`${nameParam}`])
-      .orWhereRaw(`lower('nameFi') = ?`, [`${nameParam}`])
-      .first()
+    const place = await db.knex('Places').where('nameSv', nameParam).orWhere('nameFi', nameParam).first()
     if (place) {
-      placeId = place.id
+      return place
     }
   }
-  // console.log(`placeId = ${placeId}`)
-  return placeId
+  return null
 }
 
 export async function seed(knex) {
   // Deletes ALL existing entries
   await knex('Caches').del()
 
-  let cacheList = []
-  const userId = await finUserIdByEmail('kaj.lund@gmail.com')
+  const user = await finUserByEmail('kaj.lund@gmail.com')
 
   for (const key in caches) {
-    let placeId = await findPlaceIdByName(caches[key].municipality)
+    let place = await findPlaceByName(caches[key].municipality)
 
     let cache = {
       gc: caches[key].cacheId,
@@ -52,17 +43,13 @@ export async function seed(knex) {
       name: caches[key].name,
       coords: caches[key].coords,
       verified: caches[key].verifiedCoords,
-      placeId,
-      userId,
     }
-    cacheList.push(cache)
-    if (cacheList.length >= 100) {
-      // console.log(cacheList)
-      await knex('Caches').insert(cacheList)
-      cacheList = []
+    if (place) {
+      cache.placeId = place.id
     }
-  }
-  if (cacheList.length) {
-    await knex('Caches').insert(cacheList)
+    if (user) {
+      cache.userId = user.id
+    }
+    await knex('Caches').insert(cache)
   }
 }
