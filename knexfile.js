@@ -5,30 +5,19 @@ dotenv.config()
 export default {
   development: {
     client: 'pg',
-    connection: process.env.DB_CONNECTION,
+    connection: process.env.DB_CONNECTION_DEV,
     pool: {
       min: 2,
       max: 10,
-    },
-    migrations: {
-      directory: './src/db/migrations',
-      tableName: 'knex_migrations',
-    },
-    seeds: {
-      directory: './src/db/seeds',
     },
   },
 
   test: {
     client: 'pg',
-    connection: process.env.DB_CONNECTION,
+    connection: process.env.DB_CONNECTION_TEST,
     pool: {
       min: 2,
       max: 10,
-    },
-    migrations: {
-      directory: './src/db/migrations',
-      tableName: 'knex_migrations',
     },
   },
 
@@ -38,9 +27,6 @@ export default {
     pool: {
       min: 2,
       max: 10,
-    },
-    migrations: {
-      tableName: 'knex_migrations',
     },
   },
 }
