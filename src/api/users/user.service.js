@@ -5,7 +5,9 @@ import pkg from 'validator'
 const { isLength, isEmail } = pkg
 
 import { BadRequestError, UnautorizedError } from '../../utils/errors.js'
-import { findUser, saveUser } from './user.dal.js'
+import { findOne, createOne } from '../../utils/dao.js'
+
+const table = 'Users'
 
 const SALT_ROUNDS = parseInt(process.env.SALT_ROUNDS, 10)
 
@@ -24,7 +26,7 @@ const validateNewUser = async (payload = {}) => {
   if (!isEmail(data.email)) {
     errors.email = 'Email must be a valid email address'
   } else {
-    const found = await findUser({ email: data.email })
+    const found = await findOne(table, { email: data.email })
     if (found) {
       errors.email = `Email: ${data.email} already registered`
     }
@@ -42,7 +44,7 @@ const validateNewUser = async (payload = {}) => {
 
 export const loginUser = async (payload) => {
   const { email, password } = payload
-  const user = await findUser({ email })
+  const user = await findOne(table, { email })
   if (!user) throw new UnautorizedError('Wrong email and/or password')
   const pwdOK = await bcrypt.compare(password, user.password)
   if (!pwdOK) throw new UnautorizedError('Wrong email and/or password')
@@ -59,7 +61,7 @@ export const loginUser = async (payload) => {
 export const registerUser = async (payload) => {
   const validate = await validateNewUser(payload)
   if (!validate.isValid) throw new BadRequestError('Faulty data', validate.errors)
-  const user = await saveUser(validate.data)
+  const user = await createOne(table, validate.data)
   user.password = undefined
   const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWTSecret)
   return {
