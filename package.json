@@ -14,6 +14,7 @@
     "dev": "nodemon src/server",
     "start": "node src/server",
     "start:test": "cross-env NODE_ENV=test node src/server",
+    "pretest": "cross-env NODE_ENV=test knex seed:run",
     "test": "cross-env NODE_ENV=test node bin/test.js",
     "test-db:migrate": "cross-env NODE_ENV=test knex migrate:latest",
     "test-db:rollback": "cross-env NODE_ENV=test knex migrate:rollback --all",
@@ -40,7 +41,8 @@
     "knex": "^2.5.1",
     "pg": "^8.11.3",
     "pino": "^8.15.0",
-    "pino-pretty": "^10.2.0"
+    "pino-pretty": "^10.2.0",
+    "validator": "^13.11.0"
   },
   "devDependencies": {
     "@japa/api-client": "^1.4.4",

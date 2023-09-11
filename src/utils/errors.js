@@ -15,6 +15,12 @@ export class AppError extends Error {
   }
 }
 
+export class UnautorizedError extends AppError {
+  constructor(detail = '') {
+    super(reasonPhrases.UNAUTHORIZED, statusCodes.UNAUTHORIZED, detail)
+  }
+}
+
 export class BadRequestError extends AppError {
   constructor(detail = '', errors = {}) {
     super(reasonPhrases.BAD_REQUEST, statusCodes.BAD_REQUEST, detail)
