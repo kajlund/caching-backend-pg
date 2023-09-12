@@ -4,6 +4,7 @@ import cors from 'cors'
 import db from './db/db.js'
 import errorHandler from './middleware/error.handler.js'
 import notFoundHandler from './middleware/404.handler.js'
+import placeRouter from './api/places/place.router.js'
 import userRouter from './api/users/user.router.js'
 
 const app = express()
@@ -25,6 +26,7 @@ app.get('/ping', (req, res) => {
 })
 
 // Route handlers
+app.use('/api/v1/places', placeRouter)
 app.use('/api/v1/users', userRouter)
 
 // 404 Handler
