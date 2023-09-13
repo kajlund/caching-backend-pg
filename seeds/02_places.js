@@ -4,30 +4,27 @@
  */
 
 import { readFile } from 'fs/promises'
+import crypto from 'crypto'
 
 import dotenv from 'dotenv'
 
 dotenv.config()
 
-let municiplalities
-let isTest = !!process.env.NODE_ENV === 'test'
-
-if (isTest) {
-  municiplalities = JSON.parse(await readFile(new URL('./places-test.json', import.meta.url)))
-} else {
-  municiplalities = JSON.parse(await readFile(new URL('./places.json', import.meta.url)))
-}
+let isTest = process.env.NODE_ENV === 'test'
 
 export async function seed(knex) {
   // Deletes ALL existing entries
   await knex('Places').del()
 
   if (isTest) {
-    await knex('Places').insert(municiplalities)
+    const places = JSON.parse(await readFile(new URL('./places-test.json', import.meta.url)))
+    await knex('Places').insert(places)
   } else {
+    const municiplalities = JSON.parse(await readFile(new URL('./places.json', import.meta.url)))
     const places = []
     for (const key in municiplalities) {
       places.push({
+        id: crypto.randomUUID(),
         code: parseInt(key, 10),
         nameFi: municiplalities[key].KUNTANIMIFI,
         nameSv: municiplalities[key].KUNTANIMISV,

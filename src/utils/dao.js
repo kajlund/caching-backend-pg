@@ -1,3 +1,5 @@
+import crypto from 'crypto'
+
 import db from '../db/db.js'
 
 export const findMany = async (table, query) => {
@@ -13,6 +15,7 @@ export const findOne = async (table, qry) => {
 }
 
 export const createOne = async (table, data) => {
+  data.id = crypto.randomUUID()
   const result = await db.knex(table).insert(data).returning('*')
   return result.length ? result[0] : null // Return created one or null
 }

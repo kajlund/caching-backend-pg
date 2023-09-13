@@ -4,18 +4,10 @@
  */
 
 import { readFile } from 'fs/promises'
+import crypto from 'crypto'
+
 import dotenv from 'dotenv'
-
 dotenv.config()
-
-let caches
-let isTest = !!process.env.NODE_ENV === 'test'
-
-if (isTest) {
-  caches = JSON.parse(await readFile(new URL('./caches-test.json', import.meta.url)))
-} else {
-  caches = JSON.parse(await readFile(new URL('./caches.json', import.meta.url)))
-}
 
 import db from '../src/db/db.js'
 
@@ -42,15 +34,18 @@ export async function seed(knex) {
   // Deletes ALL existing entries
   await knex('Caches').del()
 
-  if (isTest) {
+  if (process.env.NODE_ENV === 'test') {
+    const caches = JSON.parse(await readFile(new URL('./caches-test.json', import.meta.url)))
     await knex('Caches').insert(caches)
   } else {
+    const caches = JSON.parse(await readFile(new URL('./caches.json', import.meta.url)))
     const user = await findUserByEmail('kaj.lund@gmail.com')
 
     for (const key in caches) {
       let place = await findPlaceByName(caches[key].municipality)
 
       let cache = {
+        id: crypto.randomUUID(),
         gc: caches[key].cacheId,
         cacheType: caches[key].cacheType,
         name: caches[key].name,
